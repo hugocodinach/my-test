@@ -5,6 +5,7 @@
     cursor: pointer;
     background-image: linear-gradient(to right bottom, #a8d8ea, #99cbec, #94bbec, #9baae6, #aa96da);
     transition: all 0.5s;
+    padding: 0.75rem;
 
     &:hover {
         border: 0.3rem solid #A8D8EA;

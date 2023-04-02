@@ -15,8 +15,6 @@ function Button({
     text,
     onClick
 }: TextProps) {
-	const { spacing } = theme;
-
     const [isHover, setIsHover] = useState(false);
 
     const handleMouseEnter = useCallback(() => setIsHover(true), []);
@@ -24,7 +22,7 @@ function Button({
 
 	return (
 		<div
-			style={{ padding: spacing.xs, ...style }}
+			style={style}
 			className={styles.container}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

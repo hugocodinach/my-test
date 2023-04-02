@@ -8,12 +8,6 @@ export interface IBreakpoints {
     desktop: number;
 }
 
-export interface ISpacing {
-    xs: string;
-    s: string;
-    xxl: string;
-}
-
 export interface ITypography {
     fontSize: string;
     fontWeight: number;
@@ -39,6 +33,5 @@ export interface IColors {
 export interface ITheme {
     colors: IColors;
     typography: ITypographies;
-    spacing: ISpacing;
     breakpoints: IBreakpoints;
 };

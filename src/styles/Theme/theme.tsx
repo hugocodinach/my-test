@@ -31,11 +31,6 @@ const theme: ITheme = {
             "fontWeight": 500
         }
     },
-    "spacing": {
-        "xs": "0.75rem",
-        "s": "1.25rem",
-        "xxl": "20rem"
-    },
     "breakpoints": {
         "mobileS": 320,
         "mobileM": 375,
