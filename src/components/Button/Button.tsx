@@ -4,7 +4,7 @@ import Text from '../Text/Text';
 
 import styles from './Button.module.scss';
 
-type TextProps = {
+type ButtonProps = {
     style?: (React.CSSProperties & object) | undefined;
     text: string;
     onClick?: () => void;
@@ -14,7 +14,7 @@ function Button({
     style = {},
     text,
     onClick
-}: TextProps) {
+}: ButtonProps) {
     const [isHover, setIsHover] = useState(false);
 
     const handleMouseEnter = useCallback(() => setIsHover(true), []);

@@ -1,6 +1,8 @@
 import { useContext, useEffect, useRef } from 'react';
 import Button from '../../components/Button/Button';
+import Chronometer from '../../components/Chronometer/Chronometer';
 import DeckAction from '../../components/DeckAction/DeckAction';
+import Playground from '../../components/Playground/Playground';
 import Text from '../../components/Text/Text';
 import ActionsContext from '../../context/actions/ActionsContext';
 import actionNames from '../../interfaces/actionNames';
@@ -8,15 +10,14 @@ import IAction from '../../interfaces/IAction';
 import styles from './HomePage.module.scss';
 
 function HomePage() {
-    const { addActionToQueue, popActionQueue, queue } = useContext(ActionsContext);
+    const { addActionToQueue, popActionQueue, queue, play } = useContext(ActionsContext);
 
     const timeoutId = useRef(null);
 
     const executeAction = (action: IAction) => {
         timeoutId.current = null;
 
-        console.log('EXECUTE: ', action);
-
+        play(action);
         popActionQueue();
     }
 
@@ -42,9 +43,10 @@ function HomePage() {
 	return (
 		<div className={styles.container}>
             <div className={styles.gameContainer}>
-                <Text variant='title'>Prochain round</Text>
+                <Text variant='title'>Round</Text>
+                <Chronometer />
                 <div className={styles.playgroundContainer}>
-
+                    <Playground />
                 </div>
             </div>
             <div className={styles.divider} />

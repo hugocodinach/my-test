@@ -2,9 +2,11 @@ import Text from '../Text/Text';
 import styles from './DeckAction.module.scss';
 import IAction from '../../interfaces/IAction';
 
-type TextProps = {
+type DeckActionProps = {
     style?: (React.CSSProperties & object) | undefined;
-    action: IAction
+    action: IAction;
+    big?: boolean;
+    subtitle?: string;
 };
 
 const emojis = {
@@ -15,16 +17,32 @@ const emojis = {
 
 function DeckAction({
     style = {},
-    action
-}: TextProps) {
+    action,
+    big = false,
+    subtitle
+}: DeckActionProps) {
+    const containerStyle = big ?
+        {
+            width: '15rem',
+            height: '15rem',
+            ...style
+        }
+    :
+        {
+            width: '6rem',
+            height: '6rem',
+            ...style
+        }
+    ;
 
 	return (
 		<div
 			className={styles.container}
-            style={style}
+            style={containerStyle}
         >
-            <Text variant='subtitle'>{emojis[action.name]}</Text>
-            <Text variant='bodyAccent'>{action.name}</Text>
+            <Text variant={big ? 'title' : 'subtitle'}>{emojis[action.name]}</Text>
+            <Text variant={big ? 'title' : 'bodyAccent'}>{action.name}</Text>
+            <Text>{subtitle}</Text>
 		</div>
 	);
 }
