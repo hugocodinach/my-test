@@ -22,15 +22,17 @@ function Playground({
                 <Text variant='subtitle'>Ajoutez une carte à votre deck pour commencer un round</Text>
             :
                 lastRound ?
-                <div className={styles.gameContainer}>
-                    <DeckAction subtitle='Ordinateur' big action={lastRound.computerAction} />
-                    <Text className={styles.versusText} variant='title'>VS</Text>
-                    <DeckAction subtitle='Vous' big action={lastRound.playerAction} />
-                </div>
+                    <>
+                        <div className={styles.gameContainer}>
+                            <DeckAction subtitle='Ordinateur' big action={lastRound.computerAction} />
+                            <Text className={styles.versusText} variant='title'>VS</Text>
+                            <DeckAction subtitle='Vous' big action={lastRound.playerAction} />
+                        </div>
+                        <Text variant='title' color='purple'>{lastRound.winner === 'player' ? 'Gagné !' : (lastRound.winner === 'computer' ? 'Perdu !' : 'Égalité')}</Text>
+                    </>
                 :
                 null
             }
-            <Text variant='title' color='purple'>{lastRound.winner === 'player' ? 'Gagné !' : (lastRound.winner === 'computer' ? 'Perdu !' : 'Égalité')}</Text>
 		</div>
 	);
 }

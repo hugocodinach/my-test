@@ -1,4 +1,3 @@
-import theme from '../../styles/Theme/theme';
 import { useCallback, useState } from 'react';
 import Text from '../Text/Text';
 

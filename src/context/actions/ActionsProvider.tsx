@@ -1,9 +1,11 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import LoadingLottie from '../../components/Lottie/LoadingLottie';
 import actionLifetime from '../../data/actionLifeTime';
-import actionNames from '../../interfaces/actionNames';
+import actionTypes from '../../data/actionTypes';
 import IAction from '../../interfaces/IAction';
+import IActionsSettings from '../../interfaces/IActionsSettings';
 import IRound from '../../interfaces/IRound';
+import computeActionsSettings from '../../utils/actionsSettings';
 import { whoWin } from '../../utils/game';
 import ActionsContext from './ActionsContext';
 
@@ -14,8 +16,11 @@ export default function ActionsProvider({
     const [playerScore, setPlayerScore] = useState<number | null>(null);
     const [computerScore, setComputerScore] = useState<number | null>(null);
     const [lastRound, setLastRound] = useState<IRound | null>(null);
+    const [actionsSettings, setActionsSettings] = useState<IActionsSettings | null>(null);
 
-    const addActionToQueue = (name: typeof actionNames[number]) => {
+    const timeoutId = useRef(null);
+
+    const addActionToQueue = (name: typeof actionTypes[number]) => {
         if (!queue)
             return;
 
@@ -43,8 +48,21 @@ export default function ActionsProvider({
     }
 
     const play = (playerAction: IAction) => {
-        const computerSign = actionNames[Math.floor(Math.random() * 3)];
-        console.log('computerSign: ', computerSign);
+        if (!actionsSettings || actionsSettings.actionsCredits[playerAction.name].remainingCredits <= 0)
+            return;
+
+        setActionsSettings(prevState => ({
+            ...prevState,
+            actionsCredits: {
+                ...prevState.actionsCredits,
+                [playerAction.name]: {
+                    ...prevState.actionsCredits[playerAction.name],
+                    remainingCredits: prevState.actionsCredits[playerAction.name].remainingCredits - 1
+                }
+            }
+        }));
+
+        const computerSign = actionTypes[Math.floor(Math.random() * 3)];
 
         const computerAction: IAction = {
             name: computerSign,
@@ -80,16 +98,39 @@ export default function ActionsProvider({
     }, [computerScore]);
 
     useEffect(() => {
-        if (queue)
+        if (actionsSettings === null)
             return;
 
+        localStorage.setItem('shifumiActionsSettings', JSON.stringify(actionsSettings));
+
+        const currentDate = new Date();
+        const nextRefreshDate = new Date(actionsSettings.nextRefresh);
+
+        const currentDateValue = currentDate.getTime();
+        const nextRefreshDateValue = nextRefreshDate.getTime();
+
+        if (nextRefreshDateValue <= currentDateValue) {
+            timeoutId.current = null;
+            setActionsSettings(computeActionsSettings(actionsSettings.nextRefresh));
+        } else if (timeoutId?.current === null) {
+            timeoutId.current = setTimeout(() => {
+                timeoutId.current = null;
+                setActionsSettings(computeActionsSettings());
+            }, nextRefreshDateValue - currentDateValue);
+        }
+
+    }, [actionsSettings]);
+
+    useEffect(() => {
         const newQueue = localStorage.getItem('shifumiQueue');
         const newPlayerScore = localStorage.getItem('shifumiPlayerScore');
         const newComputerScore = localStorage.getItem('shifumiComputerScore');
+        const newActionsSettings = localStorage.getItem('shifumiActionsSettings');
 
         setQueue(newQueue ? JSON.parse(newQueue) : []);
         setPlayerScore(newPlayerScore ? JSON.parse(newPlayerScore) : 0);
         setComputerScore(newComputerScore ? JSON.parse(newComputerScore) : 0);
+        setActionsSettings(newActionsSettings ? JSON.parse(newActionsSettings) : computeActionsSettings());
     }, []);
 
     return (
@@ -100,10 +141,11 @@ export default function ActionsProvider({
             play,
             lastRound,
             computerScore,
-            playerScore
+            playerScore,
+            actionsSettings
         }}>
             {
-                (queue && playerScore !== null && computerScore !== null) ?
+                (queue && playerScore !== null && computerScore !== null && actionsSettings !== null) ?
                     children
                     :
                     <LoadingLottie />

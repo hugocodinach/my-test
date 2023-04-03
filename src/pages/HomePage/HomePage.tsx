@@ -5,12 +5,13 @@ import DeckAction from '../../components/DeckAction/DeckAction';
 import Playground from '../../components/Playground/Playground';
 import Text from '../../components/Text/Text';
 import ActionsContext from '../../context/actions/ActionsContext';
-import actionNames from '../../interfaces/actionNames';
+import actionTypes from '../../data/actionTypes';
 import IAction from '../../interfaces/IAction';
+import translateActionName from '../../utils/actionsTranslations';
 import styles from './HomePage.module.scss';
 
 function HomePage() {
-    const { addActionToQueue, popActionQueue, queue, play } = useContext(ActionsContext);
+    const { addActionToQueue, popActionQueue, queue, play, actionsSettings, playerScore, computerScore } = useContext(ActionsContext);
 
     const timeoutId = useRef(null);
 
@@ -43,7 +44,7 @@ function HomePage() {
 	return (
 		<div className={styles.container}>
             <div className={styles.gameContainer}>
-                <Text variant='title'>Round</Text>
+                <Text variant='title'>Ordinateur {computerScore} - Vous {playerScore}</Text>
                 <Chronometer />
                 <div className={styles.playgroundContainer}>
                     <Playground />
@@ -57,8 +58,8 @@ function HomePage() {
                 </div>
                 <div className={styles.actionContainer}>
                     {
-                        actionNames.map(action => (
-                            <Button key={action} onClick={() => addActionToQueue(action)} text={action} />
+                        actionTypes.map(action => (
+                            <Button key={action} onClick={() => addActionToQueue(action)} text={`${translateActionName(action)} (${actionsSettings.actionsCredits[action].remainingCredits} cdt)`} />
                         ))
                     }
                 </div>

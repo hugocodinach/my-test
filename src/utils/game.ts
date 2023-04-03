@@ -4,9 +4,9 @@ const whoWin = (playerAction: IAction, computerAction: IAction) => {
     if (playerAction.name === computerAction.name)
         return 'draw';
 
-    if ((playerAction.name === 'Pierre' && computerAction.name === 'Ciseaux') ||
-        (playerAction.name === 'Ciseaux' && computerAction.name === 'Feuille') ||
-        (playerAction.name === 'Feuille' && computerAction.name === 'Pierre')
+    if ((playerAction.name === 'rock' && computerAction.name === 'scissors') ||
+        (playerAction.name === 'scissors' && computerAction.name === 'leaf') ||
+        (playerAction.name === 'leaf' && computerAction.name === 'rock')
     )
         return 'player';
     return 'computer';
