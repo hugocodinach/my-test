@@ -7,7 +7,7 @@ import Text from '../../components/Text/Text';
 import ActionsContext from '../../context/actions/ActionsContext';
 import actionTypes from '../../data/actionTypes';
 import IAction from '../../interfaces/IAction';
-import translateActionName from '../../utils/actionsTranslations';
+import getTranslatedActionName from '../../utils/actionsTranslations';
 import styles from './HomePage.module.scss';
 
 function HomePage() {
@@ -59,7 +59,7 @@ function HomePage() {
                 <div className={styles.actionContainer}>
                     {
                         actionTypes.map(action => (
-                            <Button key={action} onClick={() => addActionToQueue(action)} text={`${translateActionName(action)} (${actionsSettings.actionsCredits[action].remainingCredits} cdt)`} />
+                            <Button key={action} onClick={() => addActionToQueue(action)} text={`${getTranslatedActionName(action)} (${actionsSettings.actionsCredits[action].remainingCredits} cdt)`} />
                         ))
                     }
                 </div>

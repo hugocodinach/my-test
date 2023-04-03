@@ -4,6 +4,6 @@ const translations = {
     scissors: 'Ciseaux'
 }
 
-const translateActionName = (actionName: string) => translations[actionName];
+const getTranslatedActionName = (actionName: string) => translations[actionName];
 
-export default translateActionName;
+export default getTranslatedActionName;

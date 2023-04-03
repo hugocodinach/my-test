@@ -1,17 +1,7 @@
-import actionTypes from "../data/actionTypes";
+import actionsMaxCredit from "../data/actionsMaxCredit";
 import creditsRefreshInterval from "../data/creditsRefreshInterval";
 import IActionsSettings from "../interfaces/IActionsSettings";
 import TActionsCreditsMap from "../types/TActionsCreditsMap";
-
-type maxCreditMap = {
-    [key: typeof actionTypes[number]]: number;
-}
-
-const actionsMaxCredit: maxCreditMap = {
-    'rock': 30,
-    'leaf': 20,
-    'scissors': 25
-};
 
 const getRandomValueInRange = (maxValue: number) => {
     const minValue = maxValue * 0.85;

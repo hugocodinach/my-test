@@ -22,10 +22,7 @@ export interface ITypographies {
 }
 
 export interface IColors {
-    blue: string;
     purple: string;
-    pink: string;
-    yellow: string;
     text: string;
     white: string;
 }

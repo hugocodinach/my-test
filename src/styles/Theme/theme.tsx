@@ -2,10 +2,7 @@ import { ITheme } from "./themeInterfaces";
 
 const theme: ITheme = {
     "colors": {
-        "blue": "#A8D8EA",
         "purple": "#AA96DA",
-        "pink": "#FCBAD3",
-        "yellow": "#FFFFD2",
         "text": "#394148",
         "white": "#FFFFFF"
     },

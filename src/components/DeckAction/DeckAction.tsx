@@ -1,7 +1,7 @@
 import Text from '../Text/Text';
 import styles from './DeckAction.module.scss';
 import IAction from '../../interfaces/IAction';
-import translateActionName from '../../utils/actionsTranslations';
+import getTranslatedActionName from '../../utils/actionsTranslations';
 
 type DeckActionProps = {
     style?: (React.CSSProperties & object) | undefined;
@@ -42,7 +42,7 @@ function DeckAction({
             style={containerStyle}
         >
             <Text variant={big ? 'title' : 'subtitle'}>{emojis[action.name]}</Text>
-            <Text variant={big ? 'title' : 'bodyAccent'}>{translateActionName(action.name)}</Text>
+            <Text variant={big ? 'title' : 'bodyAccent'}>{getTranslatedActionName(action.name)}</Text>
             <Text>{subtitle}</Text>
 		</div>
 	);
