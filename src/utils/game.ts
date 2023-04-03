@@ -1,3 +1,4 @@
+import actionTypes from "../data/actionTypes";
 import IAction from "../interfaces/IAction";
 
 const whoWin = (playerAction: IAction, computerAction: IAction) => {
@@ -12,6 +13,34 @@ const whoWin = (playerAction: IAction, computerAction: IAction) => {
     return 'computer';
 }
 
+const createComputerAction = () => {
+    const computerSign = actionTypes[Math.floor(Math.random() * 3)];
+
+    const computerAction: IAction = {
+        name: computerSign,
+        launchDate: ''
+    };
+
+    return computerAction;
+}
+
+const isThereANextRound = (queue: IAction[]) => {
+    if (!queue?.length)
+        return false;
+
+    const currentDate = new Date();
+    const nextActionDate = new Date(queue[0].launchDate);
+
+    const currentDateValue = currentDate.getTime();
+    const nextActionDateValue = nextActionDate.getTime();
+
+    if (currentDateValue > nextActionDateValue)
+        return false;
+    return true;
+}
+
 export {
-    whoWin
+    whoWin,
+    createComputerAction,
+    isThereANextRound
 };

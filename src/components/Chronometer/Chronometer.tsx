@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import ActionsContext from '../../context/actions/ActionsContext';
 import { useInterval } from '../../hooks/useInterval';
+import { isThereANextRound } from '../../utils/game';
 import Text from '../Text/Text';
 
 function Chronometer() {
@@ -8,23 +9,8 @@ function Chronometer() {
 
     const [secondsInterval, setSecondsInterval] = useState(-1);
 
-    const isThereANextRound = () => {
-        if (!queue?.length)
-            return false;
-
-        const currentDate = new Date();
-        const nextActionDate = new Date(queue[0].launchDate);
-
-        const currentDateValue = currentDate.getTime();
-        const nextActionDateValue = nextActionDate.getTime();
-
-        if (currentDateValue > nextActionDateValue)
-            return false;
-        return true;
-    }
-
     useInterval(() => {
-        if (!isThereANextRound()) {
+        if (!isThereANextRound(queue)) {
             if (secondsInterval !== -1)
                 setSecondsInterval(-1);
             return;

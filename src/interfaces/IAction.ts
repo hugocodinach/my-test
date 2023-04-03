@@ -1,7 +1,7 @@
-import actionTypes from "../data/actionTypes";
+import TActionName from "../types/TActionName";
 
 interface IAction {
-    name: typeof actionTypes[number];
+    name: TActionName;
     launchDate: string;
 };
 

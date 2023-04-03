@@ -6,7 +6,6 @@ import IRound from '../../interfaces/IRound';
 
 interface ActionsContextInterface {
     addActionToQueue: (name: (typeof actionTypes)[number]) => void;
-    popActionQueue: () => void;
     queue: IAction[] | null;
     play: (action: IAction) => void;
     lastRound: IRound;

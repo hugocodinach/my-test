@@ -1,10 +1,6 @@
-import actionTypes from "./actionTypes";
+import TMaxCreditMap from "../types/TMaxCreditMap";
 
-type maxCreditMap = {
-    [key: typeof actionTypes[number]]: number;
-}
-
-const actionsMaxCredit: maxCreditMap = {
+const actionsMaxCredit: TMaxCreditMap = {
     'rock': 30,
     'leaf': 20,
     'scissors': 25

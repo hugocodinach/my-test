@@ -2,6 +2,7 @@ import Text from '../Text/Text';
 import styles from './DeckAction.module.scss';
 import IAction from '../../interfaces/IAction';
 import getTranslatedActionName from '../../utils/actionsTranslations';
+import emojis from '../../data/actionEmojis';
 
 type DeckActionProps = {
     style?: (React.CSSProperties & object) | undefined;
@@ -9,12 +10,6 @@ type DeckActionProps = {
     big?: boolean;
     subtitle?: string;
 };
-
-const emojis = {
-    rock: '✊',
-    leaf: '✋',
-    scissors: '✌️'
-}
 
 function DeckAction({
     style = {},

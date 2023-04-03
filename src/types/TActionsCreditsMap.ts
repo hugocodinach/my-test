@@ -1,8 +1,8 @@
-import actionTypes from "../data/actionTypes";
 import IActionCredits from "../interfaces/IActionCredits";
+import TActionName from "./TActionName";
 
 type TActionsCreditsMap = {
-    [key: typeof actionTypes[number]]: IActionCredits;
+    [key in TActionName]: IActionCredits;
 };
 
 export default TActionsCreditsMap;

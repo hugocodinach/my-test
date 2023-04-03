@@ -1,3 +1,3 @@
-const actionTypes = ['rock', 'leaf', 'scissors'];
+const actionTypes = ['rock', 'leaf', 'scissors'] as const;
 
 export default actionTypes;

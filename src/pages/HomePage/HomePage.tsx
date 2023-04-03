@@ -8,10 +8,11 @@ import ActionsContext from '../../context/actions/ActionsContext';
 import actionTypes from '../../data/actionTypes';
 import IAction from '../../interfaces/IAction';
 import getTranslatedActionName from '../../utils/actionsTranslations';
+import { getDateDelay } from '../../utils/date';
 import styles from './HomePage.module.scss';
 
 function HomePage() {
-    const { addActionToQueue, popActionQueue, queue, play, actionsSettings, playerScore, computerScore } = useContext(ActionsContext);
+    const { addActionToQueue, queue, play, actionsSettings, playerScore, computerScore } = useContext(ActionsContext);
 
     const timeoutId = useRef(null);
 
@@ -19,25 +20,20 @@ function HomePage() {
         timeoutId.current = null;
 
         play(action);
-        popActionQueue();
     }
 
     useEffect(() => {
         if (!queue?.length || timeoutId?.current)
             return;
 
-        const currentDate = new Date();
-        const nextActionDate = new Date(queue[0].launchDate);
+        const delay = getDateDelay(queue[0].launchDate);
 
-        const currentDateValue = currentDate.getTime();
-        const nextActionDateValue = nextActionDate.getTime();
-
-        if (nextActionDateValue <= currentDateValue) {
+        if (delay <= 0) {
             executeAction(queue[0]);
         } else {
             timeoutId.current = setTimeout(() => {
                 executeAction(queue[0]);
-            }, nextActionDateValue - currentDateValue);
+            }, delay);
         }
     }, [queue]);
 
@@ -59,7 +55,11 @@ function HomePage() {
                 <div className={styles.actionContainer}>
                     {
                         actionTypes.map(action => (
-                            <Button key={action} onClick={() => addActionToQueue(action)} text={`${getTranslatedActionName(action)} (${actionsSettings.actionsCredits[action].remainingCredits} cdt)`} />
+                            <Button
+                                key={action}
+                                onClick={() => addActionToQueue(action)}
+                                text={`${getTranslatedActionName(action)} (${actionsSettings.actionsCredits[action].remainingCredits} cdt)`}
+                            />
                         ))
                     }
                 </div>

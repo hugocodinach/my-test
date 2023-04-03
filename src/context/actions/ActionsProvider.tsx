@@ -1,12 +1,17 @@
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
-import LoadingLottie from '../../components/Lottie/LoadingLottie';
-import actionLifetime from '../../data/actionLifeTime';
-import actionTypes from '../../data/actionTypes';
+
 import IAction from '../../interfaces/IAction';
 import IActionsSettings from '../../interfaces/IActionsSettings';
 import IRound from '../../interfaces/IRound';
+import TActionName from '../../types/TActionName';
+
+import { createNewActionFromName, skipNextAction } from '../../utils/actionsManagement';
 import computeActionsSettings from '../../utils/actionsSettings';
-import { whoWin } from '../../utils/game';
+import { getDateDelay } from '../../utils/date';
+import { createComputerAction, whoWin } from '../../utils/game';
+
+import LoadingLottie from '../../components/Lottie/LoadingLottie';
+
 import ActionsContext from './ActionsContext';
 
 export default function ActionsProvider({
@@ -20,17 +25,11 @@ export default function ActionsProvider({
 
     const timeoutId = useRef(null);
 
-    const addActionToQueue = (name: typeof actionTypes[number]) => {
+    const addActionToQueue = (name: TActionName) => {
         if (!queue)
             return;
 
-        const newDate = queue.length ? new Date(queue[queue.length - 1].launchDate) : new Date();
-        newDate.setTime(newDate.getTime() + actionLifetime);
-
-        const newAction: IAction = {
-            name,
-            launchDate: newDate.toISOString()
-        }
+        const newAction: IAction = createNewActionFromName(queue, name);
 
         setQueue(oldQueue => {
             const newQueue = oldQueue ? [...oldQueue, newAction] : [newAction];
@@ -48,8 +47,13 @@ export default function ActionsProvider({
     }
 
     const play = (playerAction: IAction) => {
-        if (!actionsSettings || actionsSettings.actionsCredits[playerAction.name].remainingCredits <= 0)
+        if (!actionsSettings)
             return;
+
+        if (actionsSettings.actionsCredits[playerAction.name].remainingCredits <= 0) {
+            setQueue(oldQueue => skipNextAction(oldQueue));
+            return;
+        }
 
         setActionsSettings(prevState => ({
             ...prevState,
@@ -62,39 +66,26 @@ export default function ActionsProvider({
             }
         }));
 
-        const computerSign = actionTypes[Math.floor(Math.random() * 3)];
-
-        const computerAction: IAction = {
-            name: computerSign,
-            launchDate: playerAction.launchDate
-        };
+        const computerAction: IAction = createComputerAction();
         const winner = whoWin(playerAction, computerAction);
 
         if (winner === 'player') setPlayerScore(playerScore + 1);
         else if (winner === 'computer') setComputerScore(computerScore + 1);
 
         setLastRound({ playerAction, computerAction, winner });
+        popActionQueue();
     }
 
     useEffect(() => {
-        if (!queue)
-            return;
-
-        localStorage.setItem('shifumiQueue', JSON.stringify(queue));
+        if (queue) localStorage.setItem('shifumiQueue', JSON.stringify(queue));
     }, [queue]);
 
     useEffect(() => {
-        if (playerScore === null)
-            return;
-
-        localStorage.setItem('shifumiPlayerScore', JSON.stringify(playerScore));
+        if (playerScore !== null) localStorage.setItem('shifumiPlayerScore', JSON.stringify(playerScore));
     }, [playerScore]);
 
     useEffect(() => {
-        if (computerScore === null)
-            return;
-
-        localStorage.setItem('shifumiComputerScore', JSON.stringify(computerScore));
+        if (computerScore !== null) localStorage.setItem('shifumiComputerScore', JSON.stringify(computerScore));
     }, [computerScore]);
 
     useEffect(() => {
@@ -103,22 +94,17 @@ export default function ActionsProvider({
 
         localStorage.setItem('shifumiActionsSettings', JSON.stringify(actionsSettings));
 
-        const currentDate = new Date();
-        const nextRefreshDate = new Date(actionsSettings.nextRefresh);
+        const dateDelay = getDateDelay(actionsSettings.nextRefresh);
 
-        const currentDateValue = currentDate.getTime();
-        const nextRefreshDateValue = nextRefreshDate.getTime();
-
-        if (nextRefreshDateValue <= currentDateValue) {
+        if (dateDelay <= 0) {
             timeoutId.current = null;
             setActionsSettings(computeActionsSettings(actionsSettings.nextRefresh));
         } else if (timeoutId?.current === null) {
             timeoutId.current = setTimeout(() => {
                 timeoutId.current = null;
                 setActionsSettings(computeActionsSettings());
-            }, nextRefreshDateValue - currentDateValue);
+            }, dateDelay);
         }
-
     }, [actionsSettings]);
 
     useEffect(() => {
@@ -136,7 +122,6 @@ export default function ActionsProvider({
     return (
         <ActionsContext.Provider value={{
             addActionToQueue,
-            popActionQueue,
             queue,
             play,
             lastRound,
