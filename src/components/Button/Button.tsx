@@ -20,7 +20,7 @@ function Button({
     const handleMouseLeave = useCallback(() => setIsHover(false), []);
 
 	return (
-		<div
+		<button
 			style={style}
 			className={styles.container}
             onMouseEnter={handleMouseEnter}
@@ -28,7 +28,7 @@ function Button({
             onClick={onClick}
         >
             <Text color={isHover ? 'text' : 'white'} variant='button'>{text}</Text>
-		</div>
+		</button>
 	);
 }
 
