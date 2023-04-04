@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import renderer from 'react-test-renderer';
 import { useContext } from 'react';
 import ActionsContext from '../../context/actions/ActionsContext';
 import ActionsProvider from '../../context/actions/ActionsProvider';
@@ -31,6 +32,12 @@ describe('Playground', () => {
 
         expect(window.localStorage.getItem).toHaveBeenCalledTimes(4);
         expect(window.localStorage.setItem).toHaveBeenCalledTimes(4);
+        const tree = renderer.create(
+            <ActionsProvider>
+            <Playground />
+        </ActionsProvider>
+        ).toJSON();
+        expect(tree).toMatchSnapshot();
     });
 
     test('Should render no card sentence', async () => {

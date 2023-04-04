@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import renderer from 'react-test-renderer';
 import ActionsProvider from '../../context/actions/ActionsProvider';
 import Chronometer from './Chronometer';
  
@@ -27,5 +28,8 @@ describe('Chronometer', () => {
 
         expect(window.localStorage.getItem).toHaveBeenCalledTimes(4);
         expect(window.localStorage.setItem).toHaveBeenCalledTimes(4);
+
+        const tree = renderer.create(<Chronometer />).toJSON();
+        expect(tree).toMatchSnapshot();
     });
 })

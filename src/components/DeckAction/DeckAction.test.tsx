@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import renderer from 'react-test-renderer';
 import emojis from '../../data/actionEmojis';
 import IAction from '../../interfaces/IAction';
 import getTranslatedActionName from '../../utils/actionsTranslations';
@@ -18,6 +19,8 @@ describe('DeckAction', () => {
 
         expect(actionNameElement.textContent).toEqual(getTranslatedActionName(action.name));
         expect(actionEmojiElement.textContent).toEqual(emojis[action.name]);
+        const tree = renderer.create(<DeckAction action={action} />).toJSON();
+        expect(tree).toMatchSnapshot();
     })
 
     test('Should render the given action with subtitle', async () => {
@@ -31,5 +34,7 @@ describe('DeckAction', () => {
         expect(actionNameElement.textContent).toEqual(getTranslatedActionName(action.name));
         expect(actionEmojiElement.textContent).toEqual(emojis[action.name]);
         expect(subtitleElement.textContent).toEqual('subtitle');
+        const tree = renderer.create(<DeckAction action={action} />).toJSON();
+        expect(tree).toMatchSnapshot();
     })
 })
