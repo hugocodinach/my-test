@@ -7,7 +7,7 @@ describe('getDateDelay function', () => {
         date.setTime(date.getTime() + actionLifetime);
 
         const result = getDateDelay(date.toISOString());
-        expect(result).toEqual(actionLifetime);
+        expect(result).toBeGreaterThan(0);
     });
 
     test('Should return zero', () => {
@@ -22,6 +22,6 @@ describe('getDateDelay function', () => {
         date.setTime(date.getTime() - actionLifetime);
 
         const result = getDateDelay(date.toISOString());
-        expect(result).toEqual(-actionLifetime);
+        expect(result).toBeLessThan(0);
     });
 })

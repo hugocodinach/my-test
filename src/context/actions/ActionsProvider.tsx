@@ -10,8 +10,6 @@ import computeActionsSettings from '../../utils/actionsSettings';
 import { getDateDelay } from '../../utils/date';
 import { createComputerAction, whoWin } from '../../utils/game';
 
-import LoadingLottie from '../../components/Lottie/LoadingLottie';
-
 import ActionsContext from './ActionsContext';
 
 export default function ActionsProvider({
@@ -50,7 +48,9 @@ export default function ActionsProvider({
         if (!actionsSettings)
             return;
 
-        if (actionsSettings.actionsCredits[playerAction.name].remainingCredits <= 0) {
+        const { remainingCredits, creditCost } = actionsSettings.actionsCredits[playerAction.name];
+
+        if (remainingCredits - creditCost < 0) {
             setQueue(oldQueue => skipNextAction(oldQueue));
             return;
         }
@@ -61,7 +61,7 @@ export default function ActionsProvider({
                 ...prevState.actionsCredits,
                 [playerAction.name]: {
                     ...prevState.actionsCredits[playerAction.name],
-                    remainingCredits: prevState.actionsCredits[playerAction.name].remainingCredits - 1
+                    remainingCredits: prevState.actionsCredits[playerAction.name].remainingCredits - prevState.actionsCredits[playerAction.name].creditCost
                 }
             }
         }));
@@ -133,7 +133,7 @@ export default function ActionsProvider({
                 (queue && playerScore !== null && computerScore !== null && actionsSettings !== null) ?
                     children
                     :
-                    <LoadingLottie />
+                    null
             }
         </ActionsContext.Provider>
     );

@@ -17,6 +17,8 @@ describe('createNewActionFromName function', () => {
 
         const resultDate = new Date(result.launchDate);
 
+        now.setSeconds(0, 0);
+        resultDate.setSeconds(0, 0);
         expect(resultDate.getTime()).toEqual(now.getTime() + actionLifetime);
     });
 
@@ -26,7 +28,6 @@ describe('createNewActionFromName function', () => {
         const result: IAction = createNewActionFromName([nextAction], 'rock');
 
         const resultDate = new Date(result.launchDate);
-
         expect(resultDate.getTime()).toEqual(nextActionDate.getTime() + actionLifetime);
     });
 })

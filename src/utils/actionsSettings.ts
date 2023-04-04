@@ -1,3 +1,4 @@
+import actionsCreditCost from "../data/actionsCreditCost";
 import actionsMaxCredit from "../data/actionsMaxCredit";
 import creditsRefreshInterval from "../data/creditsRefreshInterval";
 import minCreditsPercent from "../data/minCreditsPercent";
@@ -15,15 +16,18 @@ const computeActionsSettings = (oldRefreshDate?: string) => {
     const actionsCreditsMap: TActionsCreditsMap = {
         'rock': {
             maxCredit: actionsMaxCredit.rock,
-            remainingCredits: getRandomValueInRange(actionsMaxCredit.rock)
+            remainingCredits: getRandomValueInRange(actionsMaxCredit.rock),
+            creditCost: actionsCreditCost.rock
         },
         'leaf': {
             maxCredit: actionsMaxCredit.leaf,
-            remainingCredits: getRandomValueInRange(actionsMaxCredit.leaf)
+            remainingCredits: getRandomValueInRange(actionsMaxCredit.leaf),
+            creditCost: actionsCreditCost.leaf
         },
         'scissors': {
             maxCredit: actionsMaxCredit.scissors,
-            remainingCredits: getRandomValueInRange(actionsMaxCredit.scissors)
+            remainingCredits: getRandomValueInRange(actionsMaxCredit.scissors),
+            creditCost: actionsCreditCost.scissors
         }
     };
 

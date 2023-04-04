@@ -1,3 +1,4 @@
+import actionsCreditCost from "../data/actionsCreditCost";
 import actionsMaxCredit from "../data/actionsMaxCredit";
 import actionTypes from "../data/actionTypes";
 import IActionsSettings from "../interfaces/IActionsSettings";
@@ -10,6 +11,7 @@ describe('computeActionsSettings function', () => {
         actionTypes.forEach(type => {
             expect(result.actionsCredits[type]).toBeDefined();
             expect(result.actionsCredits[type].maxCredit).toEqual(actionsMaxCredit[type]);
+            expect(result.actionsCredits[type].creditCost).toEqual(actionsCreditCost[type]);
             expect(result.actionsCredits[type].remainingCredits).toBeDefined();
         });
     });
@@ -22,6 +24,7 @@ describe('computeActionsSettings function', () => {
             const maxValue = result.actionsCredits[type].maxCredit;
 
             expect(result.actionsCredits[type].maxCredit).toEqual(actionsMaxCredit[type]);
+            expect(result.actionsCredits[type].creditCost).toEqual(actionsCreditCost[type]);
             expect(result.actionsCredits[type].remainingCredits).toBeGreaterThanOrEqual(minValue);
             expect(result.actionsCredits[type].remainingCredits).toBeLessThanOrEqual(maxValue);
         });
