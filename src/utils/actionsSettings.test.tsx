@@ -52,4 +52,4 @@ describe('computeActionsSettings function', () => {
         expect(nexRefreshDate.getMinutes()).toEqual(testDate.getMinutes());
         expect(nexRefreshDate.getDay()).toEqual(testDate.getDay() === 6 ? 0 : testDate.getDay() + 1);
     });
-})
+});

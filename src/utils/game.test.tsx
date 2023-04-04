@@ -1,5 +1,5 @@
 import IAction from "../interfaces/IAction";
-import { whoWin } from "./game";
+import { createComputerAction, whoWin } from "./game";
 
 describe('whoWin function', () => {
     test('Should return computer (1)', () => {
@@ -118,4 +118,41 @@ describe('whoWin function', () => {
         const result = whoWin(playerAction, computerAction);
         expect(result).toEqual('draw');
     });
-})
+});
+
+describe('createComputerAction function', () => {
+    test('Should return a valid IAction', () => {
+        const result: IAction = createComputerAction();
+
+        expect(result).toBeDefined();
+        expect(result.name).toBeDefined();
+        expect(result.launchDate).toBeDefined();
+    });
+
+    test('Should return a rock IAction', () => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(0);
+        const result: IAction = createComputerAction();
+
+        expect(result).toBeDefined();
+        expect(result.name).toEqual('rock');
+        jest.spyOn(global.Math, 'random').mockRestore();
+    });
+
+    test('Should return a leaf IAction', () => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
+        const result: IAction = createComputerAction();
+
+        expect(result).toBeDefined();
+        expect(result.name).toEqual('leaf');
+        jest.spyOn(global.Math, 'random').mockRestore();
+    });
+
+    test('Should return a scissors IAction', () => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(0.9);
+        const result: IAction = createComputerAction();
+
+        expect(result).toBeDefined();
+        expect(result.name).toEqual('scissors');
+        jest.spyOn(global.Math, 'random').mockRestore();
+    });
+});

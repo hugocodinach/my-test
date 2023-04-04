@@ -1,10 +1,11 @@
 import actionsMaxCredit from "../data/actionsMaxCredit";
 import creditsRefreshInterval from "../data/creditsRefreshInterval";
+import minCreditsPercent from "../data/minCreditsPercent";
 import IActionsSettings from "../interfaces/IActionsSettings";
 import TActionsCreditsMap from "../types/TActionsCreditsMap";
 
 const getRandomValueInRange = (maxValue: number) => {
-    const minValue = maxValue * 0.85;
+    const minValue = maxValue * minCreditsPercent;
     const brutValue = Math.random() * (maxValue - minValue) + minValue;
 
     return Math.round(brutValue);

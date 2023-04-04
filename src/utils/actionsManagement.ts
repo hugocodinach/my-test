@@ -23,7 +23,7 @@ const skipNextAction = (queue: IAction[]) => {
 
         return {
             name: action.name,
-            launchDate: actionDate.toISOString()
+            launchDate: !isNaN(actionDate.getTime()) ? actionDate.toISOString() : action.launchDate
         };
     });
 }
