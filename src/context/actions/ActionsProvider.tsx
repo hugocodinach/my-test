@@ -1,12 +1,12 @@
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { useApi } from '../../hooks/useApi';
 
 import IAction from '../../interfaces/IAction';
 import IActionsSettings from '../../interfaces/IActionsSettings';
 import IRound from '../../interfaces/IRound';
 import TActionName from '../../types/TActionName';
 
-import { createNewActionFromName, skipNextAction } from '../../utils/actionsManagement';
-import computeActionsSettings from '../../utils/actionsSettings';
+import { createNewActionFromName } from '../../utils/actionsManagement';
 import { getDateDelay } from '../../utils/date';
 import { createComputerAction, whoWin } from '../../utils/game';
 
@@ -21,102 +21,163 @@ export default function ActionsProvider({
     const [lastRound, setLastRound] = useState<IRound | null>(null);
     const [actionsSettings, setActionsSettings] = useState<IActionsSettings | null>(null);
 
+    const getQueue = useApi('get', '/queue');
+    const getScore = useApi('get', '/score');
+    const getSettings = useApi('get', '/settings');
+    const postAction = useApi('post', '/queue/action');
+    const putScore = useApi('put', '/score');
+    const putSettingsCredits = useApi('put', '/settings/actionsCredits');
+    const putNextRefresh = useApi('put', '/settings/nextRefresh');
+    const delAction = useApi('del', `/queue/action/${queue && queue[0] ? queue[0]._id : ''}`);
+    const skipAction = useApi('del', `/queue/action/${queue && queue[0] ? queue[0]._id : ''}?skip=true`);
+
     const timeoutId = useRef(null);
 
-    const addActionToQueue = (name: TActionName) => {
+    const addActionToQueue = async (name: TActionName) => {
         if (!queue)
             return;
 
         const newAction: IAction = createNewActionFromName(queue, name);
 
-        setQueue(oldQueue => {
-            const newQueue = oldQueue ? [...oldQueue, newAction] : [newAction];
+        const res = await postAction.call(newAction);
 
-            return newQueue;
-        });
+        if (!res)
+            return;
+
+        const newQueue = await getQueue.call();
+
+        if (!newQueue)
+            return;
+
+        setQueue(newQueue);
     }
 
-    const popActionQueue = () => {
-        setQueue(oldQueue => {
-            const newQueue = oldQueue ? oldQueue.slice(1) : [];
-
-            return newQueue;
-        });
-    }
-
-    const play = (playerAction: IAction) => {
+    const play = async (playerAction: IAction) => {
         if (!actionsSettings)
             return;
 
         const { remainingCredits, creditCost } = actionsSettings.actionsCredits[playerAction.name];
 
         if (remainingCredits - creditCost < 0) {
-            setQueue(oldQueue => skipNextAction(oldQueue));
+            const delActionRes = await skipAction.call();
+
+            if (!delActionRes)
+                return;
+
+            const newQueue = await getQueue.call();
+        
+            if (newQueue) setQueue(newQueue);
             return;
         }
 
-        setActionsSettings(prevState => ({
-            ...prevState,
+        const putSettingsCreditRes = await putSettingsCredits.call({
             actionsCredits: {
-                ...prevState.actionsCredits,
+                ...actionsSettings.actionsCredits,
                 [playerAction.name]: {
-                    ...prevState.actionsCredits[playerAction.name],
-                    remainingCredits: prevState.actionsCredits[playerAction.name].remainingCredits - prevState.actionsCredits[playerAction.name].creditCost
+                    ...actionsSettings.actionsCredits[playerAction.name],
+                    remainingCredits: actionsSettings.actionsCredits[playerAction.name].remainingCredits - actionsSettings.actionsCredits[playerAction.name].creditCost
                 }
             }
-        }));
+        });
+
+        if (!putSettingsCreditRes)
+            return;
+
+        const newSettings = await getSettings.call();
+
+        if (!newSettings)
+            return;
+
+        setActionsSettings({
+            nextRefresh: newSettings.nextRefresh,
+            actionsCredits: newSettings.actionsCredits
+        });
 
         const computerAction: IAction = createComputerAction();
         const winner = whoWin(playerAction, computerAction);
 
-        if (winner === 'player') setPlayerScore(playerScore + 1);
-        else if (winner === 'computer') setComputerScore(computerScore + 1);
+        const res = await putScore.call({
+            playerScore: winner === 'player' ? playerScore + 1 : playerScore,
+            computerScore: winner === 'computer' ? computerScore + 1 : computerScore
+        });
+
+        if (!res)
+            return;
+
+        const newScore = await getScore.call();
+
+        if (!newScore)
+            return;
+
+        setPlayerScore(newScore.playerScore);
+        setComputerScore(newScore.computerScore);
 
         setLastRound({ playerAction, computerAction, winner });
-        popActionQueue();
+
+        const delActionRes = await delAction.call();
+
+        if (!delActionRes)
+            return;
+
+        const newQueue = await getQueue.call();
+    
+        if (newQueue) setQueue(newQueue);
     }
 
-    useEffect(() => {
-        if (queue) localStorage.setItem('shifumiQueue', JSON.stringify(queue));
-    }, [queue]);
+    const handleRefresh = async () => {
+        const res = await putNextRefresh.call();
 
-    useEffect(() => {
-        if (playerScore !== null) localStorage.setItem('shifumiPlayerScore', JSON.stringify(playerScore));
-    }, [playerScore]);
+        if (!res)
+            return;
 
-    useEffect(() => {
-        if (computerScore !== null) localStorage.setItem('shifumiComputerScore', JSON.stringify(computerScore));
-    }, [computerScore]);
+        const newSettings = await getSettings.call();
+
+        if (!newSettings)
+            return;
+
+        setActionsSettings({
+            nextRefresh: newSettings.nextRefresh,
+            actionsCredits: newSettings.actionsCredits
+        });
+    }
 
     useEffect(() => {
         if (actionsSettings === null)
             return;
 
-        localStorage.setItem('shifumiActionsSettings', JSON.stringify(actionsSettings));
-
         const dateDelay = getDateDelay(actionsSettings.nextRefresh);
 
         if (dateDelay <= 0) {
             timeoutId.current = null;
-            setActionsSettings(computeActionsSettings(actionsSettings.nextRefresh));
+            handleRefresh();
         } else if (timeoutId?.current === null) {
             timeoutId.current = setTimeout(() => {
                 timeoutId.current = null;
-                setActionsSettings(computeActionsSettings());
+                handleRefresh();
             }, dateDelay);
         }
     }, [actionsSettings]);
 
-    useEffect(() => {
-        const newQueue = localStorage.getItem('shifumiQueue');
-        const newPlayerScore = localStorage.getItem('shifumiPlayerScore');
-        const newComputerScore = localStorage.getItem('shifumiComputerScore');
-        const newActionsSettings = localStorage.getItem('shifumiActionsSettings');
+    const init = async () => {
+        const newQueue = await getQueue.call();
+        const newScore = await getScore.call();
+        const newSettings = await getSettings.call();
 
-        setQueue(newQueue ? JSON.parse(newQueue) : []);
-        setPlayerScore(newPlayerScore ? JSON.parse(newPlayerScore) : 0);
-        setComputerScore(newComputerScore ? JSON.parse(newComputerScore) : 0);
-        setActionsSettings(newActionsSettings ? JSON.parse(newActionsSettings) : computeActionsSettings());
+        if (newQueue) setQueue(newQueue);
+        if (newScore) {
+            setPlayerScore(newScore.playerScore);
+            setComputerScore(newScore.computerScore);
+        }
+        if (newSettings) {
+            setActionsSettings({
+                nextRefresh: newSettings.nextRefresh,
+                actionsCredits: newSettings.actionsCredits
+            });
+        }
+    }
+
+    useEffect(() => {
+        init();
     }, []);
 
     return (

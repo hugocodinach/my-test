@@ -14,21 +14,6 @@ const createNewActionFromName = (queue: IAction[], name: TActionName) => {
     return newAction;
 }
 
-const skipNextAction = (queue: IAction[]) => {
-    let newQueue = queue ? queue.slice(1) : [];
-
-    return newQueue.map(action => {
-        const actionDate = new Date(action.launchDate);
-        actionDate.setTime(actionDate.getTime() - actionLifetime);
-
-        return {
-            name: action.name,
-            launchDate: !isNaN(actionDate.getTime()) ? actionDate.toISOString() : action.launchDate
-        };
-    });
-}
-
 export {
-    createNewActionFromName,
-    skipNextAction
+    createNewActionFromName
 };
