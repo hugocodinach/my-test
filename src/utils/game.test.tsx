@@ -1,5 +1,5 @@
 import IAction from "../interfaces/IAction";
-import { createComputerAction, whoWin } from "./game";
+import { createComputerAction, whoWin, isThereANextRound } from "./game";
 
 describe('whoWin function', () => {
     test('Should return computer (1)', () => {
@@ -154,5 +154,29 @@ describe('createComputerAction function', () => {
         expect(result).toBeDefined();
         expect(result.name).toEqual('scissors');
         jest.spyOn(global.Math, 'random').mockRestore();
+    });
+});
+
+describe('isThereANextRound function', () => {
+    test('Should return false (empty queue)', () => {
+        const result: boolean = isThereANextRound([]);
+
+        expect(result).toEqual(false);
+    });
+
+    test('Should return false (no next action)', () => {
+        const actionDate = new Date();
+        actionDate.setTime(actionDate.getTime() - 2 * 60 * 1000);
+        const result: boolean = isThereANextRound([{ name: 'leaf', launchDate: actionDate.toISOString() }]);
+
+        expect(result).toEqual(false);
+    });
+
+    test('Should return true', () => {
+        const actionDate = new Date();
+        actionDate.setTime(actionDate.getTime() + 2 * 60 * 1000);
+        const result: boolean = isThereANextRound([{ name: 'leaf', launchDate: actionDate.toISOString() }]);
+
+        expect(result).toEqual(true);
     });
 });
