@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import LoadingLottie from '../../components/Lottie/LoadingLottie';
 import { useApi } from '../../hooks/useApi';
 
 import IAction from '../../interfaces/IAction';
@@ -10,6 +11,8 @@ import { getDateDelay } from '../../utils/date';
 import { createComputerAction, whoWin } from '../../utils/game';
 
 import ActionsContext from './ActionsContext';
+
+import styles from './ActionProvider.module.scss';
 
 export default function ActionsProvider({
     children
@@ -169,7 +172,9 @@ export default function ActionsProvider({
                 (queue && playerScore !== null && computerScore !== null && actionsSettings !== null) ?
                     children
                     :
-                    null
+                    <div className={styles.loadingContainer}>
+                        <LoadingLottie />
+                    </div>
             }
         </ActionsContext.Provider>
     );
