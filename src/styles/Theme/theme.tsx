@@ -4,7 +4,8 @@ const theme: ITheme = {
     "colors": {
         "purple": "#AA96DA",
         "text": "#394148",
-        "white": "#FFFFFF"
+        "white": "#FFFFFF",
+        "error": "#EA7676"
     },
     "typography": {
         "title": {

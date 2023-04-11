@@ -15,8 +15,7 @@ class Caller {
             const { data } = await this.axiosInstance.get(url);
             return data;
         } catch (error) {
-            console.log(error);
-            return null;
+            return error.response?.data || null;
         }
     }
 
@@ -25,8 +24,7 @@ class Caller {
             const { data } = await this.axiosInstance.post(url, body);
             return data;
         } catch (error) {
-            console.log(error);
-            return null;
+            return error.response?.data || null;
         }
     }
 
@@ -35,8 +33,7 @@ class Caller {
             const { data } = await this.axiosInstance.put(url, body);
             return data;
         } catch (error) {
-            console.log(error);
-            return null;
+            return error.response?.data || null;
         }
     }
 
@@ -45,8 +42,7 @@ class Caller {
             const { data } = await this.axiosInstance.delete(url);
             return data;
         } catch (error) {
-            console.log(error);
-            return null;
+            return error.response?.data || null;
         }
     }
 }

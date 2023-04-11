@@ -25,6 +25,7 @@ export interface IColors {
     purple: string;
     text: string;
     white: string;
+    error: string;
 }
 
 export interface ITheme {
