@@ -6,7 +6,6 @@ import IActionsSettings from '../../interfaces/IActionsSettings';
 import IRound from '../../interfaces/IRound';
 import TActionName from '../../types/TActionName';
 
-import { createNewActionFromName } from '../../utils/actionsManagement';
 import { getDateDelay } from '../../utils/date';
 import { createComputerAction, whoWin } from '../../utils/game';
 
@@ -37,19 +36,18 @@ export default function ActionsProvider({
         if (!queue)
             return;
 
-        const newAction: IAction = createNewActionFromName(queue, name);
-
-        const res = await postAction.call(newAction);
-
-        if (!res)
-            return;
+        if (!await postAction.call({ name })) return;
 
         const newQueue = await getQueue.call();
+        if (newQueue) setQueue(newQueue);
+    }
 
-        if (!newQueue)
-            return;
+    const skip = async () => {
+        if (!await skipAction.call()) return;
 
-        setQueue(newQueue);
+        const newQueue = await getQueue.call();
+    
+        if (newQueue) setQueue(newQueue);
     }
 
     const play = async (playerAction: IAction) => {
@@ -59,14 +57,7 @@ export default function ActionsProvider({
         const { remainingCredits, creditCost } = actionsSettings.actionsCredits[playerAction.name];
 
         if (remainingCredits - creditCost < 0) {
-            const delActionRes = await skipAction.call();
-
-            if (!delActionRes)
-                return;
-
-            const newQueue = await getQueue.call();
-        
-            if (newQueue) setQueue(newQueue);
+            await skip();
             return;
         }
 
@@ -84,14 +75,9 @@ export default function ActionsProvider({
             return;
 
         const newSettings = await getSettings.call();
+        if (!newSettings) return;
 
-        if (!newSettings)
-            return;
-
-        setActionsSettings({
-            nextRefresh: newSettings.nextRefresh,
-            actionsCredits: newSettings.actionsCredits
-        });
+        setActionsSettings({ nextRefresh: newSettings.nextRefresh, actionsCredits: newSettings.actionsCredits });
 
         const computerAction: IAction = createComputerAction();
         const winner = whoWin(playerAction, computerAction);
@@ -105,33 +91,22 @@ export default function ActionsProvider({
             return;
 
         const newScore = await getScore.call();
-
-        if (!newScore)
-            return;
+        if (!newScore) return;
 
         setPlayerScore(newScore.playerScore);
         setComputerScore(newScore.computerScore);
 
         setLastRound({ playerAction, computerAction, winner });
-
-        const delActionRes = await delAction.call();
-
-        if (!delActionRes)
-            return;
+        if (!await delAction.call()) return;
 
         const newQueue = await getQueue.call();
-    
         if (newQueue) setQueue(newQueue);
     }
 
     const handleRefresh = async () => {
-        const res = await putNextRefresh.call();
-
-        if (!res)
-            return;
+        if (!await putNextRefresh.call()) return;
 
         const newSettings = await getSettings.call();
-
         if (!newSettings)
             return;
 
