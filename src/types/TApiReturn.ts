@@ -1,6 +1,6 @@
 type TApiReturn = {
     status: 'success' | 'error',
-    code: 'string',
+    code: string,
     data: any
 }
 

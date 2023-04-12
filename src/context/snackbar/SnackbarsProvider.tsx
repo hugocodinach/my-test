@@ -37,8 +37,8 @@ export default function SnackbarsProvider(props) {
             <>
                 <div className={styles.container}>
                     {snackbars.map(snackbar => (
-                        <div className={styles.snackbarContainer}>
-                            <Snackbar snackbar={snackbar} key={snackbar.id} onClick={removeSnackbar} />
+                        <div key={snackbar.id} className={styles.snackbarContainer}>
+                            <Snackbar snackbar={snackbar} onClick={removeSnackbar} />
                         </div>
                     ))}
                 </div>

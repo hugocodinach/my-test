@@ -8,7 +8,7 @@ import styles from './Snackbar.module.scss';
 
 type SnackbarProps = {
     style?: (React.CSSProperties & object) | undefined;
-    onClick?: (id: string) => void;
+    onClick: (id: string) => void;
 	snackbar: TSnackbar;
 };
 
