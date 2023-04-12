@@ -51,7 +51,6 @@ describe('Snackbar', () => {
                 <button onClick={() => addSnackbar(apiReturn)} />
             );
         }
-        const snackbar: TSnackbar = { type: 'success', text: 'text', id: '' };
         render(<SnackbarsProvider><RenderContent /></SnackbarsProvider>);
 
         const buttonElement = screen.getByRole('button');
