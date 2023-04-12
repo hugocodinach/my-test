@@ -137,9 +137,11 @@ export default function ActionsProvider({
     }, [actionsSettings]);
 
     const init = async () => {
-        const newQueue = await getQueue.call();
-        const newScore = await getScore.call();
-        const newSettings = await getSettings.call();
+        const [ newQueue, newScore, newSettings ] = await Promise.all([
+            getQueue.call(),
+            getScore.call(),
+            getSettings.call(),
+        ]);
 
         if (newQueue) setQueue(newQueue);
         if (newScore) {

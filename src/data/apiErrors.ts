@@ -4,7 +4,6 @@ const apiErrors = {
     'PQ3': 'Le round n\'a pas pu être enregistré',
     'DQ1': 'Le round a été retiré de la liste des rounds en attente',
     'DQ2': 'Le round actuel n\'a pas pu être retiré de la liste des rounds en attente',
-    'DQ3': 'Le round actuel n\'a pas pu être retiré de la liste des rounds en attente',
     'GQ1': 'Liste des rounds récupérée',
     'GQ2': 'Les rounds en attente n\'ont pas pu être récupérés',
     'PS1': 'Le nouveau score a été enregistré',
